@@ -50,3 +50,73 @@ func (OFPA OpenFgaPermissionApi) Check(user, relation, object string) error {
 	}
 	return errors.New("access denied")
 }
+
+func (OFPA OpenFgaPermissionApi) DeleteTuple(user, relation, object string) error {
+	body := fgaSdk.WriteRequest{
+		Deletes: &fgaSdk.TupleKeys{
+			TupleKeys: []fgaSdk.TupleKey{
+				{
+					User:     &user,
+					Relation: &relation,
+					Object:   &object,
+				},
+			},
+		},
+	}
+
+	_, response, err := OFPA.client.OpenFgaApi.WriteExecute(fgaSdk.ApiWriteRequest.Body(fgaSdk.ApiWriteRequest{}, body))
+	if err != nil {
+		return err
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	var deleteionResponse TupleMutationResponse
+	err = json.Unmarshal(responseBody, &deleteionResponse)
+	if err != nil {
+		return err
+	}
+
+	if deleteionResponse.Code == "" && deleteionResponse.Message == "" {
+		return nil
+	}
+	return errors.New("access denied")
+}
+
+func (OFPA OpenFgaPermissionApi) AddTuple(user, relation, object string) error {
+	body := fgaSdk.WriteRequest{
+		Writes: &fgaSdk.TupleKeys{
+			TupleKeys: []fgaSdk.TupleKey{
+				{
+					User:     &user,
+					Relation: &relation,
+					Object:   &object,
+				},
+			},
+		},
+	}
+
+	_, response, err := OFPA.client.OpenFgaApi.WriteExecute(fgaSdk.ApiWriteRequest.Body(fgaSdk.ApiWriteRequest{}, body))
+	if err != nil {
+		return err
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	var additionResponse TupleMutationResponse
+	err = json.Unmarshal(responseBody, &additionResponse)
+	if err != nil {
+		return err
+	}
+
+	if additionResponse.Code == "" && additionResponse.Message == "" {
+		return nil
+	}
+	return errors.New("access denied")
+}

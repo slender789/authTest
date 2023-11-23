@@ -23,6 +23,11 @@ type CheckResponse struct {
 	Resolution string `json:"resolution"`
 }
 
+type TupleMutationResponse struct {
+	Code    string   `json:"code"`
+	Message string `json:"message"`
+}
+
 func AuthLibraryInterceptor(config Config, openfgaClient PermissionApi) grpc.UnaryServerInterceptor {
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
